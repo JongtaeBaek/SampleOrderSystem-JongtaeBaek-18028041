@@ -127,6 +127,22 @@ RESERVED → (재고충분) → CONFIRMED → RELEASE
 | 6 | 출고 처리 | 목록 / 출고 |
 | 0 | 종료 | |
 
+## Phase 설계 문서
+
+각 Phase 의 상세 설계(함수 시그니처, 비즈니스 로직, 테스트 케이스)는 `design/` 디렉터리를 참조한다.
+SubAgent 는 코드 구현(Step 2), 테스트 작성(Step 3) 전에 반드시 해당 Phase 설계 문서를 읽어야 한다.
+
+| Phase | 설계 문서 |
+|-------|-----------|
+| 1 | `design/phase1.md` — Model + Repository |
+| 2 | `design/phase2.md` — 시료 관리 (View + Controller) |
+| 3 | `design/phase3.md` — 시료 주문 (OrderView + OrderController.reserve) |
+| 4 | `design/phase4.md` — 주문 승인/거절 (approve, reject 분기 로직) |
+| 5 | `design/phase5.md` — 생산 라인 조회 (ProductionController + MonitoringView 일부) |
+| 6 | `design/phase6.md` — 모니터링 (MonitoringController + MonitoringView 완성) |
+| 7 | `design/phase7.md` — 출고 처리 (ReleaseController) |
+| 8 | `design/phase8.md` — 통합 완성 (MenuView + main.py) |
+
 ## 개발 워크플로우 (Phase별 7-Step 사이클)
 
 각 Phase는 아래 7단계로 진행한다. 상세 흐름도는 `PLAN.md > 진행 흐름도` 참조.
@@ -157,6 +173,26 @@ flowchart LR
 - Step 7(사용자 검토 & git commit/push)이 완료되기 전까지 다음 Phase를 시작하지 않는다.
 - Step 4, Step 5는 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.
 
+## 실행 가능한 main.py (점진적 개발)
+
+`main.py` 는 Phase 2 부터 존재하며 각 Phase 마다 새 메뉴 핸들러가 추가된다.
+
+| Phase | main.py 에 추가되는 내용 |
+|-------|------------------------|
+| 2 | `_handle_sample_menu` + 메인 메뉴 1 |
+| 3 | `_handle_order_menu` + 메인 메뉴 2 |
+| 4 | `_handle_approval_menu` + 메인 메뉴 3 + `ProductionQueue()` 생성 |
+| 5 | `_handle_production_menu` + 메인 메뉴 5 |
+| 6 | `_handle_monitoring_menu` + 메인 메뉴 4 |
+| 7 | `_handle_release_menu` + 메인 메뉴 6 |
+| 8 | MenuView 로 전면 리팩토링, `_restore_queue` 추가, 테스트 커버리지 적용 |
+
+**커버리지 정책**:
+- Phase 2~7: `.coveragerc` 에 `[run] omit = main.py` 설정 → `main.py` 는 커버리지 측정 제외
+- Phase 8: `.coveragerc` 에서 omit 제거 + `tests/test_main.py` 추가 → `main.py` 100% 커버리지 달성
+
+**실행 방법**: 어느 Phase 에서든 `python main.py` 로 구현된 기능까지 바로 테스트 가능.
+
 ## 테스트 전략
 
 - **목표**: 커버리지 100% (`# pragma: no cover` 사용 금지)
@@ -165,5 +201,6 @@ flowchart LR
 - **Repository 테스트**: `tmp_path` fixture로 실제 파일 I/O 검증
 - **Controller 테스트**: Repository를 mock하여 상태 변화 검증
 - **View 테스트**: `builtins.input` mock, `capsys`로 출력 검증
-- **main.py 테스트**: `tmp_path` + `monkeypatch.chdir`, `runpy`로 `__main__` 블록 커버
+- **main.py 테스트**: Phase 8 에서 `tmp_path` + `monkeypatch.chdir`, `runpy`로 `__main__` 블록 커버
 - `pytest.ini`: `pythonpath = .`, `testpaths = tests`
+- `.coveragerc`: Phase 2~7 에서 `[run] omit = main.py`, Phase 8 에서 제거

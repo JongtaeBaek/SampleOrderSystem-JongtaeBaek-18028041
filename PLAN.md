@@ -95,6 +95,8 @@ flowchart TD
 
 ## Phase 1 — 기반 구성 (Model + Repository)
 
+**설계 문서**: [`design/phase1.md`](design/phase1.md)
+
 **목표**: 도메인 모델과 JSON 영속성 레이어 완성
 
 **산출물**
@@ -118,13 +120,13 @@ flowchart TD
 
 | Step | 명령 | 완료 기준 | 상태 |
 |------|------|-----------|------|
-| 1 | `/agents:subagent_doc_validator 1` | PASS 리포트 | ⬜ |
-| 2 | `/agents:subagent_code_implementer 1` | 산출물 파일 생성 완료 | ⬜ |
-| 3 | `/agents:subagent_test_writer 1` | 테스트 파일 생성 완료 | ⬜ |
-| 4 | `/agents:subagent_tester 1` | 전체 PASS + 커버리지 100% | ⬜ |
-| 5 | `/agents:subagent_compliance_verifier 1` | PASS 리포트 | ⬜ |
-| 6 | `/agents:subagent_refactorer 1` | 리팩토링 후 pytest PASS | ⬜ |
-| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
+| 1 | `/agents:subagent_doc_validator 1` | PASS 리포트 | ✅ |
+| 2 | `/agents:subagent_code_implementer 1` | 산출물 파일 생성 완료 | ✅ |
+| 3 | `/agents:subagent_test_writer 1` | 테스트 파일 생성 완료 | ✅ |
+| 4 | `/agents:subagent_tester 1` | 전체 PASS + 커버리지 100% | ✅ |
+| 5 | `/agents:subagent_compliance_verifier 1` | PASS 리포트 | ✅ |
+| 6 | `/agents:subagent_refactorer 1` | 리팩토링 후 pytest PASS | ✅ |
+| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ✅ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
 > **Step 7 완료 전까지 Phase 2를 시작하지 않는다.**
@@ -132,6 +134,8 @@ flowchart TD
 ---
 
 ## Phase 2 — 시료 관리 (메뉴 1)
+
+**설계 문서**: [`design/phase2.md`](design/phase2.md)
 
 **목표**: 시료 등록 / 조회 / 검색 기능 완성
 
@@ -141,6 +145,8 @@ flowchart TD
   - `register(sample_id, name, avg_time, yield_rate)` — 중복 ID 검사 후 저장
   - `list_all()` — 전체 목록 반환
   - `search(keyword)` — 이름 부분 일치 검색
+- `main.py` — 시료 관리 메뉴(1번)만 포함하는 실행 가능 파일
+- `.coveragerc` — `[run] omit = main.py` (Phase 8 에서 제거)
 
 **테스트 범위**
 - `tests/test_view_sample.py` — input mock, capsys
@@ -152,12 +158,12 @@ flowchart TD
 
 | Step | 명령 | 완료 기준 | 상태 |
 |------|------|-----------|------|
-| 1 | `/agents:subagent_doc_validator 2` | PASS 리포트 | ⬜ |
-| 2 | `/agents:subagent_code_implementer 2` | 산출물 파일 생성 완료 | ⬜ |
-| 3 | `/agents:subagent_test_writer 2` | 테스트 파일 생성 완료 | ⬜ |
-| 4 | `/agents:subagent_tester 2` | 전체 PASS + 커버리지 100% | ⬜ |
-| 5 | `/agents:subagent_compliance_verifier 2` | PASS 리포트 | ⬜ |
-| 6 | `/agents:subagent_refactorer 2` | 리팩토링 후 pytest PASS | ⬜ |
+| 1 | `/agents:subagent_doc_validator 2` | PASS 리포트 | ✅ |
+| 2 | `/agents:subagent_code_implementer 2` | 산출물 파일 생성 완료 | ✅ |
+| 3 | `/agents:subagent_test_writer 2` | 테스트 파일 생성 완료 | ✅ |
+| 4 | `/agents:subagent_tester 2` | 전체 PASS + 커버리지 100% | ✅ |
+| 5 | `/agents:subagent_compliance_verifier 2` | PASS 리포트 | ✅ |
+| 6 | `/agents:subagent_refactorer 2` | 리팩토링 후 pytest PASS | ✅ |
 | 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
@@ -167,12 +173,15 @@ flowchart TD
 
 ## Phase 3 — 시료 주문 (메뉴 2)
 
+**설계 문서**: [`design/phase3.md`](design/phase3.md)
+
 **목표**: 주문 예약 기능 완성
 
 **산출물**
 - `view/order_view.py` — 예약 입력 수집, 주문 목록 출력
 - `controller/order_controller.py`
   - `reserve(sample_id, customer_name, quantity)` — sample 존재 검사, Order 생성(RESERVED), 저장
+- `main.py` 업데이트 — 시료 주문 메뉴(2번) 추가, `OrderRepository` 분리 초기화
 
 **테스트 범위**
 - `tests/test_view_order.py` (예약 부분)
@@ -199,6 +208,8 @@ flowchart TD
 
 ## Phase 4 — 주문 승인/거절 (메뉴 3)
 
+**설계 문서**: [`design/phase4.md`](design/phase4.md)
+
 **목표**: 재고 분기 승인 로직 + 거절 기능 완성
 
 **산출물**
@@ -209,6 +220,7 @@ flowchart TD
     - 재고 부족: `ProductionJob` 생성 + 큐 enqueue, `PRODUCING`
   - `reject(order_id)` — `REJECTED` 전환
 - `view/order_view.py` 추가 — 승인/거절 입력 수집, RESERVED 목록 출력
+- `main.py` 업데이트 — 주문 승인/거절 메뉴(3번) 추가, `ProductionQueue()` 생성
 
 **테스트 범위**
 - `tests/test_controller_order.py` (approve 재고 충분/부족 분기, reject)
@@ -235,6 +247,8 @@ flowchart TD
 
 ## Phase 5 — 생산 라인 조회 (메뉴 5)
 
+**설계 문서**: [`design/phase5.md`](design/phase5.md)
+
 **목표**: 생산 현황 표시 + 생산 완료 처리 기능 완성
 
 **산출물**
@@ -243,6 +257,7 @@ flowchart TD
   - `complete(production_queue)` — dequeue, stock 증가, 주문 CONFIRMED, 저장
   - `list_queue(production_queue)` — 대기 목록 반환
 - `view/monitoring_view.py` (생산 현황 / 대기 목록 출력 부분)
+- `main.py` 업데이트 — 생산 라인 조회 메뉴(5번) 추가
 
 **테스트 범위**
 - `tests/test_controller_production.py` — 큐 비어있는 경우 / 완료 처리 분기
@@ -269,6 +284,8 @@ flowchart TD
 
 ## Phase 6 — 모니터링 (메뉴 4)
 
+**설계 문서**: [`design/phase6.md`](design/phase6.md)
+
 **목표**: 주문량 현황 + 재고 상태 조회 기능 완성
 
 **산출물**
@@ -276,6 +293,7 @@ flowchart TD
   - `order_summary()` — 상태별 주문 건수 반환 (REJECTED 제외)
   - `stock_summary()` — 시료별 재고 + 여유/부족/고갈 상태 반환
 - `view/monitoring_view.py` 추가 — 주문량 / 재고량 출력
+- `main.py` 업데이트 — 모니터링 메뉴(4번) 추가
 
 **재고 상태 기준**
 - 고갈: `stock == 0`
@@ -307,12 +325,15 @@ flowchart TD
 
 ## Phase 7 — 출고 처리 (메뉴 6)
 
+**설계 문서**: [`design/phase7.md`](design/phase7.md)
+
 **목표**: CONFIRMED 주문 출고 기능 완성
 
 **산출물**
 - `controller/release_controller.py`
   - `list_confirmed()` — CONFIRMED 목록 반환
   - `release(order_id)` — `stock -= quantity`, 상태 RELEASE, 저장
+- `main.py` 업데이트 — 출고 처리 메뉴(6번) 추가 (메뉴 1~6 전체 완성)
 
 **테스트 범위**
 - `tests/test_controller_release.py`
@@ -338,14 +359,18 @@ flowchart TD
 
 ## Phase 8 — 통합 완성 (main.py + View 완성)
 
+**설계 문서**: [`design/phase8.md`](design/phase8.md)
+
 **목표**: 전체 메뉴 루프 통합, ProductionQueue 복원, 최종 커버리지 100%
 
 **산출물**
 - `view/menu_view.py` — 메인/서브 메뉴 출력 + 선택 입력
-- `main.py`
+- `main.py` 리팩토링
   - `_restore_queue(orders, samples)` — PRODUCING 주문으로 ProductionQueue 재구성
-  - `main()` — 메뉴 1~6 라우팅 루프
-- 각 Controller에 서브메뉴 흐름 연결
+  - `main()` — MenuView 적용, 앱 시작 시 JSON 로드 + 큐 복원, 메뉴 1~6 라우팅
+  - 기존 `_handle_*` 핸들러를 `menu_view` 인자를 받는 형태로 교체
+- `.coveragerc` 업데이트 — `omit = main.py` 제거
+- `tests/test_main.py` — `runpy` 기반 통합 테스트, `__main__` 블록 커버
 
 **ProductionQueue 복원 로직**
 ```
@@ -384,8 +409,8 @@ for order in orders where status == PRODUCING:
 
 | Phase | 내용 | Step1 문서검증 | Step2 코드구현 | Step3 테스트작성 | Step4 테스트실행 | Step5 PRD준수 | Step6 리팩토링 | Step7 검토/push | Phase 상태 |
 |-------|------|:--------------:|:--------------:|:----------------:|:----------------:|:-------------:|:--------------:|:---------------:|:----------:|
-| 1 | Model + Repository | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
-| 2 | 시료 관리 (메뉴 1) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
+| 1 | Model + Repository | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
+| 2 | 시료 관리 (메뉴 1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | 🔄 검토 대기 |
 | 3 | 시료 주문 (메뉴 2) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
 | 4 | 주문 승인/거절 (메뉴 3) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
 | 5 | 생산 라인 조회 (메뉴 5) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
