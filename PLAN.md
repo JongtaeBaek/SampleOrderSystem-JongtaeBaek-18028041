@@ -398,7 +398,7 @@ for order in orders where status == PRODUCING:
 | 4 | `/agents:subagent_tester 8` | 전체 PASS + 커버리지 100% | ✅ |
 | 5 | `/agents:subagent_compliance_verifier 8` | PASS 리포트 | ✅ |
 | 6 | `/agents:subagent_refactorer 8` | 리팩토링 후 pytest PASS | ✅ |
-| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
+| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ✅ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
 > **Step 7 완료 후 프로젝트 최종 완료.**
@@ -413,7 +413,7 @@ for order in orders where status == PRODUCING:
 | 2 | 시료 관리 (메뉴 1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
 | 3 | 시료 주문 (메뉴 2) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
 | 4 | 주문 승인/거절 (메뉴 3) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
-| 5 | 생산 라인 조회 (메뉴 5) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
-| 6 | 모니터링 (메뉴 4) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
-| 7 | 출고 처리 (메뉴 6) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
-| 8 | 통합 완성 (main.py) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
+| 5 | 생산 라인 조회 (메뉴 5) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
+| 6 | 모니터링 (메뉴 4) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
+| 7 | 출고 처리 (메뉴 6) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
+| 8 | 통합 완성 (main.py) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
