@@ -1,6 +1,7 @@
 from repository.sample_repository import SampleRepository
 from repository.order_repository import OrderRepository
 from model.order import OrderStatus
+from model.production import ProductionQueue
 from controller.sample_controller import SampleController
 from controller.order_controller import OrderController
 from view.sample_view import SampleView
@@ -35,6 +36,24 @@ def _show_main_header(sample_repo: SampleRepository, order_repo: OrderRepository
         f"  |  출고대기: {confirmed}건"
     )
     print("-" * _W)
+
+
+def _handle_approval_menu(ctrl: OrderController, view: OrderView, production_queue: ProductionQueue) -> None:
+    while True:
+        _show_sub_menu("주문 승인/거절", ["접수된 주문 목록", "주문 승인", "주문 거절"])
+        choice = input("  선택: ").strip()
+        if choice == "0":
+            break
+        elif choice == "1":
+            view.show_reserved_list(ctrl.list_reserved())
+        elif choice == "2":
+            order_id = view.prompt_order_id("승인")
+            ctrl.approve(order_id, production_queue)
+        elif choice == "3":
+            order_id = view.prompt_order_id("거절")
+            ctrl.reject(order_id)
+        else:
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
 def _handle_order_menu(ctrl: OrderController, view: OrderView) -> None:
@@ -77,11 +96,13 @@ def main() -> None:
     sample_view = SampleView()
     order_ctrl = OrderController(order_repo, sample_repo)
     order_view = OrderView()
+    production_queue = ProductionQueue()
 
     while True:
         _show_main_header(sample_repo, order_repo)
         print("  1. 시료 관리")
         print("  2. 시료 주문")
+        print("  3. 주문 승인/거절")
         print("  0. 종료")
         print("=" * _W)
         choice = input("  메뉴 선택: ").strip()
@@ -91,6 +112,8 @@ def main() -> None:
             _handle_sample_menu(sample_ctrl, sample_view)
         elif choice == "2":
             _handle_order_menu(order_ctrl, order_view)
+        elif choice == "3":
+            _handle_approval_menu(order_ctrl, order_view, production_queue)
         else:
             print("  잘못된 입력입니다. 다시 선택하세요.")
 
