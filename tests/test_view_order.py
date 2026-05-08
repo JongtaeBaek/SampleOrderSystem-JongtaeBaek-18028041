@@ -251,3 +251,73 @@ def test_show_reject_success_contains_order_id(capsys):
     view.show_reject_success(order_id)
     captured = capsys.readouterr()
     assert order_id in captured.out
+
+
+# ---------------------------------------------------------------------------
+# Phase 7: show_confirmed_list
+# ---------------------------------------------------------------------------
+
+def test_show_confirmed_list_empty(capsys):
+    """show_confirmed_list prints '출고 대기 중인 주문이 없습니다.' when the list is empty."""
+    view = OrderView()
+    view.show_confirmed_list([])
+    captured = capsys.readouterr()
+    assert "출고 대기 중인 주문이 없습니다." in captured.out
+
+
+def test_show_confirmed_list_empty_no_header(capsys):
+    """show_confirmed_list does not print a header when the list is empty."""
+    view = OrderView()
+    view.show_confirmed_list([])
+    captured = capsys.readouterr()
+    assert "주문ID" not in captured.out
+
+
+def test_show_confirmed_list_with_orders(capsys):
+    """show_confirmed_list delegates to show_order_list when orders exist."""
+    view = OrderView()
+    orders = [
+        Order("cccc1234", "S001", "김철수", 5, OrderStatus.CONFIRMED),
+    ]
+    view.show_confirmed_list(orders)
+    captured = capsys.readouterr()
+    # show_order_list header is present
+    assert "주문ID" in captured.out
+    # Row data is present
+    assert "cccc1234" in captured.out
+    assert "김철수" in captured.out
+    assert "CONFIRMED" in captured.out
+
+
+def test_show_confirmed_list_no_empty_message_when_has_orders(capsys):
+    """show_confirmed_list does not print '출고 대기 중인 주문이 없습니다.' when orders exist."""
+    view = OrderView()
+    orders = [
+        Order("cccc1234", "S001", "김철수", 5, OrderStatus.CONFIRMED),
+    ]
+    view.show_confirmed_list(orders)
+    captured = capsys.readouterr()
+    assert "출고 대기 중인 주문이 없습니다." not in captured.out
+
+
+# ---------------------------------------------------------------------------
+# Phase 7: show_release_success
+# ---------------------------------------------------------------------------
+
+def test_show_release_success(capsys):
+    """show_release_success prints '출고 완료: <order_id> → RELEASE'."""
+    view = OrderView()
+    view.show_release_success("abcd1234")
+    captured = capsys.readouterr()
+    assert "출고 완료:" in captured.out
+    assert "abcd1234" in captured.out
+    assert "RELEASE" in captured.out
+
+
+def test_show_release_success_contains_order_id(capsys):
+    """show_release_success output contains the exact order_id passed."""
+    view = OrderView()
+    order_id = "xyz98765"
+    view.show_release_success(order_id)
+    captured = capsys.readouterr()
+    assert order_id in captured.out

@@ -6,6 +6,7 @@ from controller.sample_controller import SampleController
 from controller.order_controller import OrderController
 from controller.monitoring_controller import MonitoringController
 from controller.production_controller import ProductionController
+from controller.release_controller import ReleaseController
 from view.sample_view import SampleView
 from view.order_view import OrderView
 from view.monitoring_view import MonitoringView
@@ -75,6 +76,22 @@ def _handle_production_menu(ctrl: ProductionController, view: MonitoringView, pr
             print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
+def _handle_release_menu(ctrl: ReleaseController, view: OrderView) -> None:
+    while True:
+        _show_sub_menu("출고 처리", ["출고 대기 목록", "출고 처리"])
+        choice = input("  선택: ").strip()
+        if choice == "0":
+            break
+        elif choice == "1":
+            view.show_confirmed_list(ctrl.list_confirmed())
+        elif choice == "2":
+            order_id = view.prompt_order_id("출고")
+            if ctrl.release(order_id):
+                view.show_release_success(order_id)
+        else:
+            print("  잘못된 입력입니다. 다시 선택하세요.")
+
+
 def _handle_approval_menu(ctrl: OrderController, view: OrderView, production_queue: ProductionQueue) -> None:
     while True:
         _show_sub_menu("주문 승인/거절", ["접수된 주문 목록", "주문 승인", "주문 거절"])
@@ -137,6 +154,7 @@ def main() -> None:
     production_ctrl = ProductionController(order_repo, sample_repo)
     monitoring_ctrl = MonitoringController(order_repo, sample_repo)
     monitoring_view = MonitoringView()
+    release_ctrl = ReleaseController(order_repo, sample_repo)
 
     while True:
         _show_main_header(sample_repo, order_repo)
@@ -145,6 +163,7 @@ def main() -> None:
         print("  3. 주문 승인/거절")
         print("  4. 모니터링")
         print("  5. 생산 라인 조회")
+        print("  6. 출고 처리")
         print("  0. 종료")
         print("=" * _W)
         choice = input("  메뉴 선택: ").strip()
@@ -160,6 +179,8 @@ def main() -> None:
             _handle_monitoring_menu(monitoring_ctrl, monitoring_view)
         elif choice == "5":
             _handle_production_menu(production_ctrl, monitoring_view, production_queue)
+        elif choice == "6":
+            _handle_release_menu(release_ctrl, order_view)
         else:
             print("  잘못된 입력입니다. 다시 선택하세요.")
 

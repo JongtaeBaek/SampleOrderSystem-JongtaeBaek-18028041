@@ -37,3 +37,12 @@ class OrderView:
 
     def show_reject_success(self, order_id: str) -> None:
         print(f"거절 완료: {order_id} → REJECTED")
+
+    def show_confirmed_list(self, orders: list[Order]) -> None:
+        if not orders:
+            print("출고 대기 중인 주문이 없습니다.")
+            return
+        self.show_order_list(orders)
+
+    def show_release_success(self, order_id: str) -> None:
+        print(f"출고 완료: {order_id} → RELEASE")
