@@ -4,6 +4,7 @@ from model.order import OrderStatus
 from model.production import ProductionQueue
 from controller.sample_controller import SampleController
 from controller.order_controller import OrderController
+from controller.monitoring_controller import MonitoringController
 from controller.production_controller import ProductionController
 from view.sample_view import SampleView
 from view.order_view import OrderView
@@ -38,6 +39,20 @@ def _show_main_header(sample_repo: SampleRepository, order_repo: OrderRepository
         f"  |  출고대기: {confirmed}건"
     )
     print("-" * _W)
+
+
+def _handle_monitoring_menu(ctrl: MonitoringController, view: MonitoringView) -> None:
+    while True:
+        _show_sub_menu("모니터링", ["주문량 확인", "재고량 확인"])
+        choice = input("  선택: ").strip()
+        if choice == "0":
+            break
+        elif choice == "1":
+            view.show_order_summary(ctrl.order_summary())
+        elif choice == "2":
+            view.show_stock_summary(ctrl.stock_summary())
+        else:
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
 def _handle_production_menu(ctrl: ProductionController, view: MonitoringView, production_queue: ProductionQueue) -> None:
@@ -120,6 +135,7 @@ def main() -> None:
     order_view = OrderView()
     production_queue = ProductionQueue()
     production_ctrl = ProductionController(order_repo, sample_repo)
+    monitoring_ctrl = MonitoringController(order_repo, sample_repo)
     monitoring_view = MonitoringView()
 
     while True:
@@ -127,6 +143,7 @@ def main() -> None:
         print("  1. 시료 관리")
         print("  2. 시료 주문")
         print("  3. 주문 승인/거절")
+        print("  4. 모니터링")
         print("  5. 생산 라인 조회")
         print("  0. 종료")
         print("=" * _W)
@@ -139,6 +156,8 @@ def main() -> None:
             _handle_order_menu(order_ctrl, order_view)
         elif choice == "3":
             _handle_approval_menu(order_ctrl, order_view, production_queue)
+        elif choice == "4":
+            _handle_monitoring_menu(monitoring_ctrl, monitoring_view)
         elif choice == "5":
             _handle_production_menu(production_ctrl, monitoring_view, production_queue)
         else:

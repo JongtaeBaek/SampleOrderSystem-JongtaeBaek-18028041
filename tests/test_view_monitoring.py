@@ -1,4 +1,4 @@
-"""Tests for view/monitoring_view.py — 100% coverage (Phase 5: production현황 부분)."""
+"""Tests for view/monitoring_view.py — 100% coverage (Phase 5: 생산현황 / Phase 6: 주문량·재고량 현황)."""
 import pytest
 
 from model.production import ProductionJob
@@ -166,3 +166,146 @@ def test_show_complete_success_format(view, capsys):
     out = capsys.readouterr().out
     assert "생산 완료: 주문 cccccccc" in out
     assert "7개 생산" in out
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 — show_order_summary
+# ---------------------------------------------------------------------------
+
+def test_show_order_summary(view, capsys):
+    """show_order_summary prints header and all 4 status counts correctly."""
+    summary = {
+        "RESERVED": 3,
+        "PRODUCING": 1,
+        "CONFIRMED": 2,
+        "RELEASE": 4,
+    }
+    view.show_order_summary(summary)
+    out = capsys.readouterr().out
+    assert "주문량 현황" in out
+    assert "RESERVED" in out
+    assert "PRODUCING" in out
+    assert "CONFIRMED" in out
+    assert "RELEASE" in out
+    assert "3" in out
+    assert "1" in out
+    assert "2" in out
+    assert "4" in out
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 — show_stock_summary (empty)
+# ---------------------------------------------------------------------------
+
+def test_show_stock_summary_empty(view, capsys):
+    """show_stock_summary prints '등록된 시료가 없습니다.' when list is empty."""
+    view.show_stock_summary([])
+    out = capsys.readouterr().out
+    assert "등록된 시료가 없습니다." in out
+
+
+def test_show_stock_summary_empty_no_header(view, capsys):
+    """show_stock_summary does not print table header when list is empty."""
+    view.show_stock_summary([])
+    out = capsys.readouterr().out
+    assert "시료ID" not in out
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 — show_stock_summary (with data)
+# ---------------------------------------------------------------------------
+
+def test_show_stock_summary_with_data(view, capsys):
+    """show_stock_summary prints header, separator, and row data when list has items."""
+    summaries = [
+        {
+            "sample_id": "S001",
+            "name": "Silicon Wafer",
+            "stock": 20,
+            "active_quantity": 10,
+            "stock_status": "여유",
+        }
+    ]
+    view.show_stock_summary(summaries)
+    out = capsys.readouterr().out
+    assert "시료ID" in out
+    assert "S001" in out
+    assert "Silicon Wafer" in out
+    assert "20" in out
+    assert "10" in out
+    assert "여유" in out
+
+
+def test_show_stock_summary_with_data_shortage_status(view, capsys):
+    """show_stock_summary prints '부족' status string for shortage rows."""
+    summaries = [
+        {
+            "sample_id": "S002",
+            "name": "GaAs Wafer",
+            "stock": 3,
+            "active_quantity": 15,
+            "stock_status": "부족",
+        }
+    ]
+    view.show_stock_summary(summaries)
+    out = capsys.readouterr().out
+    assert "부족" in out
+    assert "S002" in out
+
+
+def test_show_stock_summary_with_data_depleted_status(view, capsys):
+    """show_stock_summary prints '고갈' status string for depleted rows."""
+    summaries = [
+        {
+            "sample_id": "S003",
+            "name": "InP Wafer",
+            "stock": 0,
+            "active_quantity": 5,
+            "stock_status": "고갈",
+        }
+    ]
+    view.show_stock_summary(summaries)
+    out = capsys.readouterr().out
+    assert "고갈" in out
+    assert "S003" in out
+
+
+def test_show_stock_summary_with_multiple_rows(view, capsys):
+    """show_stock_summary prints all rows when multiple summaries are given."""
+    summaries = [
+        {
+            "sample_id": "S001",
+            "name": "Silicon Wafer",
+            "stock": 20,
+            "active_quantity": 10,
+            "stock_status": "여유",
+        },
+        {
+            "sample_id": "S002",
+            "name": "GaAs Wafer",
+            "stock": 0,
+            "active_quantity": 5,
+            "stock_status": "고갈",
+        },
+    ]
+    view.show_stock_summary(summaries)
+    out = capsys.readouterr().out
+    assert "S001" in out
+    assert "S002" in out
+    assert "여유" in out
+    assert "고갈" in out
+
+
+def test_show_stock_summary_with_data_no_empty_message(view, capsys):
+    """show_stock_summary does not print empty message when data is present."""
+    summaries = [
+        {
+            "sample_id": "S001",
+            "name": "Silicon Wafer",
+            "stock": 10,
+            "active_quantity": 5,
+            "stock_status": "여유",
+        }
+    ]
+    view.show_stock_summary(summaries)
+    assert "등록된 시료가 없습니다." not in capsys.readouterr().out

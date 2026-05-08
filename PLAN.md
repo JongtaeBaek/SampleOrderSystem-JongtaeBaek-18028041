@@ -275,7 +275,7 @@ flowchart TD
 | 4 | `/agents:subagent_tester 5` | 전체 PASS + 커버리지 100% | ✅ |
 | 5 | `/agents:subagent_compliance_verifier 5` | PASS 리포트 | ✅ |
 | 6 | `/agents:subagent_refactorer 5` | 리팩토링 후 pytest PASS | ✅ |
-| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
+| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ✅ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
 > **Step 7 완료 전까지 Phase 6을 시작하지 않는다.**
@@ -310,12 +310,12 @@ flowchart TD
 
 | Step | 명령 | 완료 기준 | 상태 |
 |------|------|-----------|------|
-| 1 | `/agents:subagent_doc_validator 6` | PASS 리포트 | ⬜ |
-| 2 | `/agents:subagent_code_implementer 6` | 산출물 파일 생성 완료 | ⬜ |
-| 3 | `/agents:subagent_test_writer 6` | 테스트 파일 생성 완료 | ⬜ |
-| 4 | `/agents:subagent_tester 6` | 전체 PASS + 커버리지 100% | ⬜ |
-| 5 | `/agents:subagent_compliance_verifier 6` | PASS 리포트 | ⬜ |
-| 6 | `/agents:subagent_refactorer 6` | 리팩토링 후 pytest PASS | ⬜ |
+| 1 | `/agents:subagent_doc_validator 6` | PASS 리포트 | ✅ |
+| 2 | `/agents:subagent_code_implementer 6` | 산출물 파일 생성 완료 | ✅ |
+| 3 | `/agents:subagent_test_writer 6` | 테스트 파일 생성 완료 | ✅ |
+| 4 | `/agents:subagent_tester 6` | 전체 PASS + 커버리지 100% | ✅ |
+| 5 | `/agents:subagent_compliance_verifier 6` | PASS 리포트 | ✅ |
+| 6 | `/agents:subagent_refactorer 6` | 리팩토링 후 pytest PASS | ✅ |
 | 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
