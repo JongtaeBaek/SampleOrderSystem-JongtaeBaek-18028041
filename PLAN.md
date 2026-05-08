@@ -18,7 +18,7 @@ Step 4, Step 5는 병렬 실행. 둘 다 PASS 후 Step 6 실행. Step 6 PASS 후
 - 각 Phase는 독립적으로 테스트 가능한 단위로 구성
 - Phase 완료 기준: 해당 Phase 범위 내 커버리지 100%
 - 최종 완료 기준: 전체 커버리지 100% (`pytest` 단일 명령)
-- **Phase 격리**: 반드시 현재 Phase의 6개 Step만 수행한다. 이전 Phase가 완전히 완료(✅)되지 않은 상태에서 다음 Phase를 시작하지 않는다.
+- **Phase 격리**: 반드시 현재 Phase의 7개 Step만 수행한다. 이전 Phase가 완전히 완료(✅)되지 않은 상태에서 다음 Phase를 시작하지 않는다.
 - **Phase 완료 게이트**: Step 6 완료 후 반드시 사용자의 검토를 받는다. 사용자가 승인하면 `git commit & push`를 수행하고 다음 Phase로 진행한다. 재작업이 필요하면 해당 Step으로 돌아가 수정한다.
 
 ---
