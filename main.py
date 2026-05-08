@@ -4,8 +4,10 @@ from model.order import OrderStatus
 from model.production import ProductionQueue
 from controller.sample_controller import SampleController
 from controller.order_controller import OrderController
+from controller.production_controller import ProductionController
 from view.sample_view import SampleView
 from view.order_view import OrderView
+from view.monitoring_view import MonitoringView
 
 _W = 60
 
@@ -36,6 +38,26 @@ def _show_main_header(sample_repo: SampleRepository, order_repo: OrderRepository
         f"  |  출고대기: {confirmed}건"
     )
     print("-" * _W)
+
+
+def _handle_production_menu(ctrl: ProductionController, view: MonitoringView, production_queue: ProductionQueue) -> None:
+    while True:
+        _show_sub_menu("생산 라인 조회", ["생산 현황", "대기 주문 확인"])
+        choice = input("  선택: ").strip()
+        if choice == "0":
+            break
+        elif choice == "1":
+            job = ctrl.show_current(production_queue)
+            view.show_production_current(job)
+            if job is not None:
+                confirm = input("  생산 완료 처리하시겠습니까? (y/n): ").strip()
+                if confirm == "y":
+                    if ctrl.complete(production_queue):
+                        view.show_complete_success(job)
+        elif choice == "2":
+            view.show_production_queue(ctrl.list_queue(production_queue))
+        else:
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
 def _handle_approval_menu(ctrl: OrderController, view: OrderView, production_queue: ProductionQueue) -> None:
@@ -97,12 +119,15 @@ def main() -> None:
     order_ctrl = OrderController(order_repo, sample_repo)
     order_view = OrderView()
     production_queue = ProductionQueue()
+    production_ctrl = ProductionController(order_repo, sample_repo)
+    monitoring_view = MonitoringView()
 
     while True:
         _show_main_header(sample_repo, order_repo)
         print("  1. 시료 관리")
         print("  2. 시료 주문")
         print("  3. 주문 승인/거절")
+        print("  5. 생산 라인 조회")
         print("  0. 종료")
         print("=" * _W)
         choice = input("  메뉴 선택: ").strip()
@@ -114,6 +139,8 @@ def main() -> None:
             _handle_order_menu(order_ctrl, order_view)
         elif choice == "3":
             _handle_approval_menu(order_ctrl, order_view, production_queue)
+        elif choice == "5":
+            _handle_production_menu(production_ctrl, monitoring_view, production_queue)
         else:
             print("  잘못된 입력입니다. 다시 선택하세요.")
 
