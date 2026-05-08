@@ -127,25 +127,22 @@ from view.monitoring_view import MonitoringView
 ```python
 def _handle_production_menu(ctrl: ProductionController, view: MonitoringView, production_queue: ProductionQueue) -> None:
     while True:
-        print("\n=== 생산 라인 조회 ===")
-        print("1. 생산 현황")
-        print("2. 대기 주문 확인")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("생산 라인 조회", ["생산 현황", "대기 주문 확인"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
             job = ctrl.show_current(production_queue)
             view.show_production_current(job)
             if job is not None:
-                confirm = input("생산 완료 처리하시겠습니까? (y/n): ").strip()
+                confirm = input("  생산 완료 처리하시겠습니까? (y/n): ").strip()
                 if confirm == "y":
                     if ctrl.complete(production_queue):
                         view.show_complete_success(job)
         elif choice == "2":
             view.show_production_queue(ctrl.list_queue(production_queue))
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 ```
 
 **`main()` 변경**:

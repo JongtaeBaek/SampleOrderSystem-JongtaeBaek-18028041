@@ -112,25 +112,67 @@ SampleView.prompt_register()
 
 ## main.py 연동
 
-`main.py` 는 Phase 2 부터 실행 가능한 파일로 유지된다. Phase 2~7 은 MenuView 없이 직접  
-`print()` / `input()` 으로 메뉴를 출력하고, Phase 8 에서 MenuView 로 리팩토링된다.
+`main.py` 는 Phase 2 부터 실행 가능한 파일로 유지된다.  
+메인 화면은 대시보드(시료/주문 현황 요약)와 메뉴를 함께 표시하며, 서브메뉴는 `_show_sub_menu(title, options)` 헬퍼로 일관된 형식을 유지한다.  
+Phase 8 에서 `_show_main_header` → `menu_view.show_main_menu()`, `_show_sub_menu` → `menu_view.show_sub_menu()` 로 리팩토링된다.
+
+**실행 화면 예시**:
+```
+============================================================
+  반도체 시료 생산 주문 관리 시스템
+============================================================
+  시료: 3종  |  접수: 2건  |  생산중: 1건  |  출고대기: 0건
+------------------------------------------------------------
+  1. 시료 관리
+  0. 종료
+============================================================
+  메뉴 선택:
+```
 
 **Phase 2 이후 main.py 전체 내용**:
 
 ```python
 from repository.sample_repository import SampleRepository
+from repository.order_repository import OrderRepository
+from model.order import OrderStatus
 from controller.sample_controller import SampleController
 from view.sample_view import SampleView
+
+_W = 60
+
+
+def _show_sub_menu(title: str, options: list[str]) -> None:
+    print("\n" + "=" * _W)
+    print(f"  [ {title} ]")
+    print("-" * _W)
+    for i, opt in enumerate(options, 1):
+        print(f"  {i}. {opt}")
+    print("  0. 돌아가기")
+    print("=" * _W)
+
+
+def _show_main_header(sample_repo: SampleRepository, order_repo: OrderRepository) -> None:
+    samples = sample_repo.load()
+    orders = order_repo.load()
+    reserved  = sum(1 for o in orders if o.status == OrderStatus.RESERVED)
+    producing = sum(1 for o in orders if o.status == OrderStatus.PRODUCING)
+    confirmed = sum(1 for o in orders if o.status == OrderStatus.CONFIRMED)
+    print("\n" + "=" * _W)
+    print("  반도체 시료 생산 주문 관리 시스템")
+    print("=" * _W)
+    print(
+        f"  시료: {len(samples)}종"
+        f"  |  접수: {reserved}건"
+        f"  |  생산중: {producing}건"
+        f"  |  출고대기: {confirmed}건"
+    )
+    print("-" * _W)
 
 
 def _handle_sample_menu(ctrl: SampleController, view: SampleView) -> None:
     while True:
-        print("\n=== 시료 관리 ===")
-        print("1. 시료 등록")
-        print("2. 시료 조회")
-        print("3. 시료 검색")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("시료 관리", ["시료 등록", "시료 조회", "시료 검색"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
@@ -143,24 +185,27 @@ def _handle_sample_menu(ctrl: SampleController, view: SampleView) -> None:
             kw = view.prompt_search_keyword()
             view.show_search_result(ctrl.search(kw))
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
 def main() -> None:
-    sample_ctrl = SampleController(SampleRepository())
+    sample_repo = SampleRepository()
+    order_repo = OrderRepository()
+    sample_ctrl = SampleController(sample_repo)
     sample_view = SampleView()
 
     while True:
-        print("\n=== 반도체 시료 생산 주문 관리 시스템 ===")
-        print("1. 시료 관리")
-        print("0. 종료")
-        choice = input("메뉴 선택: ").strip()
+        _show_main_header(sample_repo, order_repo)
+        print("  1. 시료 관리")
+        print("  0. 종료")
+        print("=" * _W)
+        choice = input("  메뉴 선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
             _handle_sample_menu(sample_ctrl, sample_view)
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 
 
 if __name__ == "__main__":

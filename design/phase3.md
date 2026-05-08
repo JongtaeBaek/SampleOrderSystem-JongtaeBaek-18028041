@@ -111,10 +111,8 @@ from view.order_view import OrderView
 ```python
 def _handle_order_menu(ctrl: OrderController, view: OrderView) -> None:
     while True:
-        print("\n=== 시료 주문 ===")
-        print("1. 시료 예약")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("시료 주문", ["시료 예약"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
@@ -122,7 +120,7 @@ def _handle_order_menu(ctrl: OrderController, view: OrderView) -> None:
             if ctrl.reserve(*args):
                 view.show_reserve_success(args[0])
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 ```
 
 **`main()` 변경**:

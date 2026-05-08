@@ -119,11 +119,8 @@ from controller.release_controller import ReleaseController
 ```python
 def _handle_release_menu(ctrl: ReleaseController, view: OrderView) -> None:
     while True:
-        print("\n=== 출고 처리 ===")
-        print("1. 출고 대기 목록")
-        print("2. 출고 처리")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("출고 처리", ["출고 대기 목록", "출고 처리"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
@@ -133,7 +130,7 @@ def _handle_release_menu(ctrl: ReleaseController, view: OrderView) -> None:
             if ctrl.release(order_id):
                 view.show_release_success(order_id)
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 ```
 
 **`main()` 변경**:

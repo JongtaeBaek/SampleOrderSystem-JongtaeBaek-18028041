@@ -13,38 +13,54 @@
 
 ```python
 class MenuView:
-    def show_main_menu(self) -> None
+    def show_main_menu(self, n_samples: int, reserved: int, producing: int, confirmed: int) -> None
     def prompt_main_choice(self) -> str
     def show_sub_menu(self, title: str, options: list[str]) -> None
     def prompt_sub_choice(self) -> str
     def show_invalid_choice(self) -> None
 ```
 
-#### `show_main_menu()`
+#### `show_main_menu(n_samples, reserved, producing, confirmed)`
+Phase 2~7 의 `_show_main_header` + 메인 메뉴 항목 출력을 하나로 통합.  
+대시보드(현황 요약) + 메뉴 항목(1~6, 0) 을 아래 형식으로 출력:
 ```
-=== 반도체 시료 생산 주문 관리 시스템 ===
-1. 시료 관리
-2. 시료 주문
-3. 주문 승인/거절
-4. 모니터링
-5. 생산 라인 조회
-6. 출고 처리
-0. 종료
+============================================================
+  반도체 시료 생산 주문 관리 시스템
+============================================================
+  시료: N종  |  접수: N건  |  생산중: N건  |  출고대기: N건
+------------------------------------------------------------
+  1. 시료 관리
+  2. 시료 주문
+  3. 주문 승인/거절
+  4. 모니터링
+  5. 생산 라인 조회
+  6. 출고 처리
+  0. 종료
+============================================================
 ```
+- `_W = 60` 상수 사용 (`"=" * 60`, `"-" * 60`)
 
 #### `prompt_main_choice() -> str`
-- `input("메뉴 선택: ").strip()` 반환
+- `input("  메뉴 선택: ").strip()` 반환
 
 #### `show_sub_menu(title, options)`
-- `f"=== {title} ==="` 출력
-- `options` 를 `1.`, `2.`, ... 번호와 함께 출력
-- `0. 돌아가기` 항상 마지막 출력
+Phase 2~7 의 `_show_sub_menu(title, options)` 와 동일한 출력 형식:
+```
+============================================================
+  [ title ]
+------------------------------------------------------------
+  1. option1
+  2. option2
+  0. 돌아가기
+============================================================
+```
+- `_W = 60` 사용
 
 #### `prompt_sub_choice() -> str`
-- `input("선택: ").strip()` 반환
+- `input("  선택: ").strip()` 반환
 
 #### `show_invalid_choice()`
-- `"잘못된 입력입니다. 다시 선택하세요."` 출력
+- `"  잘못된 입력입니다. 다시 선택하세요."` 출력
 
 ---
 
@@ -100,7 +116,13 @@ def main():
     monitoring_view = MonitoringView()
 
     while True:
-        menu_view.show_main_menu()
+        orders = order_repo.load()
+        menu_view.show_main_menu(
+            n_samples=len(sample_repo.load()),
+            reserved=sum(1 for o in orders if o.status == OrderStatus.RESERVED),
+            producing=sum(1 for o in orders if o.status == OrderStatus.PRODUCING),
+            confirmed=sum(1 for o in orders if o.status == OrderStatus.CONFIRMED),
+        )
         choice = menu_view.prompt_main_choice()
 
         if choice == "0":
@@ -192,7 +214,7 @@ def _handle_release_menu(ctrl, order_view, menu_view):
 
 | 테스트 | 검증 내용 |
 |--------|-----------|
-| `test_show_main_menu` | 메뉴 항목 0~6 모두 출력 |
+| `test_show_main_menu` | 메뉴 항목 0~6 + 대시보드(시료/접수/생산중/출고대기 수) 출력 |
 | `test_prompt_main_choice` | input 1회, 반환값 검증 |
 | `test_show_sub_menu` | title, options, "0. 돌아가기" 출력 |
 | `test_prompt_sub_choice` | input 1회, 반환값 검증 |

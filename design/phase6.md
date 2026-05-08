@@ -145,11 +145,8 @@ from controller.monitoring_controller import MonitoringController
 ```python
 def _handle_monitoring_menu(ctrl: MonitoringController, view: MonitoringView) -> None:
     while True:
-        print("\n=== 모니터링 ===")
-        print("1. 주문량 확인")
-        print("2. 재고량 확인")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("모니터링", ["주문량 확인", "재고량 확인"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
@@ -157,7 +154,7 @@ def _handle_monitoring_menu(ctrl: MonitoringController, view: MonitoringView) ->
         elif choice == "2":
             view.show_stock_summary(ctrl.stock_summary())
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 ```
 
 **`main()` 변경**:

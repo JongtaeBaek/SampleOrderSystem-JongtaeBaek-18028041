@@ -156,12 +156,8 @@ from model.production import ProductionQueue
 ```python
 def _handle_approval_menu(ctrl: OrderController, view: OrderView, production_queue: ProductionQueue) -> None:
     while True:
-        print("\n=== 주문 승인/거절 ===")
-        print("1. 접수된 주문 목록")
-        print("2. 주문 승인")
-        print("3. 주문 거절")
-        print("0. 돌아가기")
-        choice = input("선택: ").strip()
+        _show_sub_menu("주문 승인/거절", ["접수된 주문 목록", "주문 승인", "주문 거절"])
+        choice = input("  선택: ").strip()
         if choice == "0":
             break
         elif choice == "1":
@@ -173,7 +169,7 @@ def _handle_approval_menu(ctrl: OrderController, view: OrderView, production_que
             order_id = view.prompt_order_id("거절")
             ctrl.reject(order_id)
         else:
-            print("잘못된 입력입니다. 다시 선택하세요.")
+            print("  잘못된 입력입니다. 다시 선택하세요.")
 ```
 
 **`main()` 변경**:
