@@ -164,7 +164,7 @@ flowchart TD
 | 4 | `/agents:subagent_tester 2` | 전체 PASS + 커버리지 100% | ✅ |
 | 5 | `/agents:subagent_compliance_verifier 2` | PASS 리포트 | ✅ |
 | 6 | `/agents:subagent_refactorer 2` | 리팩토링 후 pytest PASS | ✅ |
-| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
+| 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ✅ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
 > **Step 7 완료 전까지 Phase 3을 시작하지 않는다.**
@@ -193,12 +193,12 @@ flowchart TD
 
 | Step | 명령 | 완료 기준 | 상태 |
 |------|------|-----------|------|
-| 1 | `/agents:subagent_doc_validator 3` | PASS 리포트 | ⬜ |
-| 2 | `/agents:subagent_code_implementer 3` | 산출물 파일 생성 완료 | ⬜ |
-| 3 | `/agents:subagent_test_writer 3` | 테스트 파일 생성 완료 | ⬜ |
-| 4 | `/agents:subagent_tester 3` | 전체 PASS + 커버리지 100% | ⬜ |
-| 5 | `/agents:subagent_compliance_verifier 3` | PASS 리포트 | ⬜ |
-| 6 | `/agents:subagent_refactorer 3` | 리팩토링 후 pytest PASS | ⬜ |
+| 1 | `/agents:subagent_doc_validator 3` | PASS 리포트 | ✅ |
+| 2 | `/agents:subagent_code_implementer 3` | 산출물 파일 생성 완료 | ✅ |
+| 3 | `/agents:subagent_test_writer 3` | 테스트 파일 생성 완료 | ✅ |
+| 4 | `/agents:subagent_tester 3` | 전체 PASS + 커버리지 100% | ✅ |
+| 5 | `/agents:subagent_compliance_verifier 3` | PASS 리포트 | ✅ |
+| 6 | `/agents:subagent_refactorer 3` | 리팩토링 후 pytest PASS | ✅ |
 | 7 | 사용자 검토 & `git commit/push` | 검토 승인 + push 완료 | ⬜ |
 
 > Step 4, Step 5 병렬 실행 가능. 둘 다 PASS 후 Step 6 실행.  
@@ -410,8 +410,8 @@ for order in orders where status == PRODUCING:
 | Phase | 내용 | Step1 문서검증 | Step2 코드구현 | Step3 테스트작성 | Step4 테스트실행 | Step5 PRD준수 | Step6 리팩토링 | Step7 검토/push | Phase 상태 |
 |-------|------|:--------------:|:--------------:|:----------------:|:----------------:|:-------------:|:--------------:|:---------------:|:----------:|
 | 1 | Model + Repository | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
-| 2 | 시료 관리 (메뉴 1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | 🔄 검토 대기 |
-| 3 | 시료 주문 (메뉴 2) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
+| 2 | 시료 관리 (메뉴 1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 |
+| 3 | 시료 주문 (메뉴 2) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | 🔄 검토 대기 |
 | 4 | 주문 승인/거절 (메뉴 3) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
 | 5 | 생산 라인 조회 (메뉴 5) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
 | 6 | 모니터링 (메뉴 4) | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ 대기 |
